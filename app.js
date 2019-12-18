@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const express = require('express');
 const bodyParser = require('body-parser');
 const HttpError = require('./models/http-error');
@@ -21,5 +22,10 @@ app.use((err, req, res, next) => {
     res.status(500).json({msg: err.message || 'some err occurd'})
 });
 
-app.listen(3000);
-
+mongoose.connect('mongodb://sri:<password>@cluster0-shard-00-00-m6hr7.mongodb.net:27017,cluster0-shard-00-01-m6hr7.mongodb.net:27017,cluster0-shard-00-02-m6hr7.mongodb.net:27017/nodeApp?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority')
+    .then(()=>{
+        app.listen(3000);
+    })
+    .catch(err=>{
+        console.log(err);
+    });

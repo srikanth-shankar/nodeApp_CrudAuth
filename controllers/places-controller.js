@@ -1,6 +1,7 @@
 const HttpError = require('../models/http-error');
 const uuid = require('uuid/v4');
 const {validationResult} = require('express-validator');
+const Place = require('../models/place');
 
 let DUMMY_PLACES = [
     {
@@ -43,11 +44,15 @@ createPlace = (req, res, next) => {
         throw new HttpError('invalid inputs', 422);
     }
     const {title, desc, creator} = req.body;
-    const createdPlace = {
-        id: uuid(),
+    const createdPlace = new Place({
         title, desc, creator
-    };
-    DUMMY_PLACES.push(createdPlace);
+    });
+    try{
+        createdPlace.save();
+    } catch(err) {
+        const error = new HttpError('creating failed..try again', 500);
+        return next(error);
+    }
     res.status(201).json({place: createdPlace});
 };
 
